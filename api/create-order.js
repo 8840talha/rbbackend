@@ -1,3 +1,4 @@
+
 import Razorpay from 'razorpay';
 
 const razorpay = new Razorpay({
@@ -6,17 +7,15 @@ const razorpay = new Razorpay({
 });
 
 export default async function handler(req, res) {
-  // ✅ CORS preflight
   if (req.method === 'OPTIONS') {
     res.setHeader('Access-Control-Allow-Credentials', true);
-    res.setHeader('Access-Control-Allow-Origin', '*'); // or 'http://localhost:3000'
+    res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     return res.status(200).end();
   }
 
-  // ✅ Actual response headers
-  res.setHeader('Access-Control-Allow-Origin', '*'); // or your domain in prod
+  res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
 
   if (req.method !== 'POST') {
