@@ -6,19 +6,22 @@ const razorpay = new Razorpay({
 });
 
 export default async function handler(req, res) {
-  // ✅ Handle CORS preflight
+  // ✅ CORS preflight
   if (req.method === 'OPTIONS') {
     res.setHeader('Access-Control-Allow-Credentials', true);
     res.setHeader('Access-Control-Allow-Origin', '*'); // or 'http://localhost:3000'
-    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     return res.status(200).end();
   }
 
-  // ✅ Allow POST requests from any origin (or restrict to your domain)
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  // ✅ Actual response headers
+  res.setHeader('Access-Control-Allow-Origin', '*'); // or your domain in prod
+  res.setHeader('Access-Control-Allow-Credentials', true);
 
-  if (req.method !== 'POST') return res.status(405).end();
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method Not Allowed' });
+  }
 
   const { amount } = req.body;
 
@@ -29,8 +32,9 @@ export default async function handler(req, res) {
       receipt: `receipt_${Date.now()}`,
     });
 
-    res.status(200).json(order);
+    return res.status(200).json(order);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Error creating order:', err);
+    return res.status(500).json({ error: 'Failed to create order' });
   }
 }
